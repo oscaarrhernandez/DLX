@@ -1,35 +1,58 @@
-.data
-# Variables y constantes
-valor_inicial: .word 3  
+.data 
+;; VARIABLES DE ENTRADA Y SALIDA: NO MODIFICAR ORDEN 
+; VARIABLE DE ENTRADA: (SE PODRA MODIFICAR EL VALOR ENTRE 1 Y 100) 
+valor_inicial:   .word   3 
+ 
+;; VARIABLES DE SALIDA: 
+secuencia:   .space  120*4 
+secuencia_tamanho:  .word   0 
+secuencia_maximo:  .word   0 
+secuencia_valor_medio: .float  0  
+lista:    .space    9*4 
+lista_valor_medio:  .float  0 
+;; FIN VARIABLES DE ENTRADA Y SALIDA 
 
 .text
-
+.global main
 
 main:
-    # Tu código comienza aquí
-    # Por ejemplo, cargar valores en registros, realizar operaciones, etc.
+    ;Cargar valor inicial en registro 1
+    lw R1, valor_inicial
 
-    # Ejemplo: cargar un valor en el registro $t0
-    li $t0, 10   # carga el valor 10 en el registro $t0
+    ;indice de la secuencia
+    LW R2, 0
 
-    # Ejemplo: imprimir un mensaje
-    la $a0, message    # carga la dirección del mensaje en $a0
-    li $v0, 4          # carga el código de la llamada al sistema para imprimir una cadena en $v0
-    syscall            # llama al sistema para imprimir el mensaje
+    loop:
+        ;R1==0?
+        BEQ R1, R0, end_loop
 
-    # Tu código continúa aquí
+        ;Almacenar en secuencia
+        SW R1, secuencia(R2)
+        ;Incrementar tamaño secuencia
+        ADDI R3, R2, 1
+        SW R3, secuencia_tamanho
 
-    # Finaliza el programa
-    li $v0, 10   # carga el código de la llamada al sistema para salir del programa en $v0
-    syscall      # llama al sistema para salir del programa
+        ;ComprobarMax
+        BGT R1, secuencia_maximo, update_max
+        JMP continue
 
-# Sección de datos (opcional)
-.data
-# Aquí puedes definir mensajes y otros datos estáticos
-message: .asciiz "Hola, mundo!"   # define un mensaje de texto
+    update_max:
+        SW R1, secuencia_maximo
 
-# Punto de entrada del programa
-.globl _start
-_start:
-    # Llama a la etiqueta main para iniciar el programa
-    jal main
+    continue:
+        ;Calcular sig elemento
+        REM R3,R1,2
+        BEQ> R3, par ;Si es par salta   
+
+        ;Si es impar
+        MULI R1, R1, 3   # R1 = R1 * 3
+        ADDI R1, R1, 1   # R1 = R1 + 1
+        JMP continue
+
+    par:
+        SRA R1, R1, 1 ;Mover bit a la derecha es dividir entre 2
+        ADDI R2, R2, 1 ;indice++
+        JMP loop 
+
+end_loop:
+    trap 0;FIN
