@@ -24,7 +24,7 @@ main:
 
     loop:
         ;R1==0?
-        BEQ R1, R0, end_loop
+        BEQZ R1, end_loop
 
         ;Almacenar en secuencia
         SW R1, secuencia(R2)
