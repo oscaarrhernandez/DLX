@@ -27,17 +27,18 @@ main:
         BEQZ R1, end_loop
 
         ;Almacenar en secuencia
-        SW R1, secuencia(R2)
+        SW secuencia(R2),R1
         ;Incrementar tamaño secuencia
         ADDI R3, R2, 1
-        SW R3, secuencia_tamanho
+        SW secuencia_tamanho,R3
 
         ;ComprobarMax
-        BGT R1, secuencia_maximo, update_max
-        JMP continue
+        SUB R1, secuencia_maximo, R4
+        BEQZ R1, update_max
+        J continue
 
     update_max:
-        SW R1, secuencia_maximo
+        SW secuencia_maximo,R1
 
     continue:
         ;Calcular sig elemento
@@ -47,12 +48,12 @@ main:
         ;Si es impar
         MULI R1, R1, 3   # R1 = R1 * 3
         ADDI R1, R1, 1   # R1 = R1 + 1
-        JMP continue
+        J continue
 
     par:
         SRA R1, R1, 1 ;Mover bit a la derecha es dividir entre 2
         ADDI R2, R2, 1 ;indice++
-        JMP loop 
+        J loop 
 
 end_loop:
     trap 0;FIN
