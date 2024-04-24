@@ -11,49 +11,59 @@ secuencia_valor_medio: .float  0
 lista:    .space    9*4 
 lista_valor_medio:  .float  0 
 ;; FIN VARIABLES DE ENTRADA Y SALIDA 
+PrintFormat: .asciiz "%d\n"
+						 .align  2
+PrintPar:    .word PrintFormat
+Printvalue:  .space 4
+
 
 .text
 .global main
 
+; r1 valor inicial
+; r2 indice de la secuencia
+; r3 valor 3 para la multiplicacion
+; r4 tamaño_secuencia
+; r5 secuencia maximo
+; r6 A[n-1]
+; r7 A[n]
+
+
+
 main:
-    ;Cargar valor inicial en registro 1
-    lw R1, valor_inicial
+    
+    lw r1,valor_inicial ;Cargar valor inicial
+    lw r2,1 ;indice de la secuencia
+    add r6,r0,r1 ; A[n-1]
+		lw r4,1 ; r4(registro de tamsecuencia) = 1
+		add r7,r0,r1; A[n]
+		add r3,r0,3 ; valor 3 usado en x3
 
-    ;indice de la secuencia
-    LW R2, 0
+loop:
+		subi r8,r6,1 ; si A[n-1] es 1 finaliza
+		jal print ;
+		beqz r8, finish ; si A[n-1] == 0 saltar a finish
+    addi r4,r4,1 ; suma 1 a tamsecuencia
 
-    loop:
-        ;R1==0?
-        BEQZ R1, end_loop
+		andi r9,r6,1 ; si A[n-1] es impar
+		beqz r9,par ; r6 AND 1 == 0 saltar a par
+		mult r7,r3,r6 ; Multiplicacion Secuencia impar
+		addi r7,r7,1; Sumarle uno a la multiplicación
+		addi r4,r4,1 ; suma 1 a tamsecuencia
+		add r6,r7,r0 ; A[n-1]=A[n]
+		j loop
 
-        ;Almacenar en secuencia
-        SW secuencia(R2),R1
-        ;Incrementar tamaño secuencia
-        ADDI R3, R2, 1
-        SW secuencia_tamanho,R3
+par:
+		srli r7,r6,1 ; A[n]=A[n-1]/2 desplazamiento logico inmediato a la derecha
+		addi r4,r4,1 ; suma 1 a tamsecuencia
+		add r6,r7,r0 ; A[n-1]=A[n]
+		j loop
 
-        ;ComprobarMax
-        SUB R1, secuencia_maximo, R4
-        BEQZ R1, update_max
-        J continue
+print:
+		sw Printvalue,r7
+		addi r14,r0,PrintPar
+		trap 5
+		jr r31
 
-    update_max:
-        SW secuencia_maximo,R1
-
-    continue:
-        ;Calcular sig elemento
-        REM R3,R1,2
-        BEQ> R3, par ;Si es par salta   
-
-        ;Si es impar
-        MULI R1, R1, 3   # R1 = R1 * 3
-        ADDI R1, R1, 1   # R1 = R1 + 1
-        J continue
-
-    par:
-        SRA R1, R1, 1 ;Mover bit a la derecha es dividir entre 2
-        ADDI R2, R2, 1 ;indice++
-        J loop 
-
-end_loop:
-    trap 0;FIN
+finish:
+		trap 0
