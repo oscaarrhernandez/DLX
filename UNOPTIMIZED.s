@@ -22,36 +22,61 @@ PrintPar:    .word PrintFormat
 Printvalue:  .space 4
 
 
-		.text
-		.global main
+.text
+.global main
+
+; r0 -> 0
+; r1 -> secuencia
+; r2 -> tamano
+; r3 -> 3
+; r4 -> valor
 
 main:
-	lw   r1, 0 ; indice secuencia
-	lw   r2,valor_inicial	; cargamos valor_inicial en r2
-	add  r3,r0,r2 ; A[n-1]
-	lw   r10,secuencia_tamanho
-	add  r10,r0,1 ; suma 1 a secuencia_tamanho
-	add  r4,r0,r2 ; A[n]
-	add  r5,r0,3 ; valor 3 en el registro r5. Usado para x3
+
+		lw r4, valor_inicial
+
+		movi2fp f1, r4
+		cvti2f f1,f1
+
+		addi r1,r0,secuencia
+		sf 0(r1),f1
+		addi r1,r1, #4
+		
+		addf f5,f0,f1 ; f5 = vMax
+		
+		lw r2, secuencia_tamanho
+									; f1 = A[n-1]
+		addf f2,f0,f1 ; f2 = A[n]
+
+
+		add r3,r0,3
+		movi2fp f3, r3
 
 loop:
-	subi r6,r3,1  ; Si A[n-1] es 1 finaliza
-	jal print
-	beqz r6,finish
-	add  r10,r10,1 ; suma 1 a secuencia_tamanho
-	;sw secuencia(r1),r6
-	andi r7,r3,1  ; Si A[n-1] es impar
-	beqz r7,par
-	mult r4,r3,r5 ; Impar A[n]=3xA[n]+1
-	addi r4,r4,1
-	add  r10,r10,1 ; suma 1 a secuencia_tamanho
-	add  r3,r4,r0 ; A[n-1]=A[n]s
-	j loop
+		subf f4,f2,1
+		jal print
+
+		beqz f4,finish
+
+		addi r2,r2,1
+
+		andi f4,f2,1
+		beqz f4,par
+		multf f2,f3,f1
+		addf f2,f2,1
+		addf f1,f2,f0
+
+		sf 0(r1),f1
+		addi r1,r1, #4
+
+		j loop
 
 par:
-	srli r4,r3,1  ; A[n]=A[n-1]/2
-	add r3,r4,r0  ; A[n-1]=A[n]
-	j loop
+		srli f2,f1,1
+		addf f1,f2,f0
+		sf 0(r1),f1
+		addi r1,r1, #4
+
 
 print:
 	sw Printvalue,r4
@@ -60,5 +85,5 @@ print:
 	jr r31
 
 finish:
-	sw secuencia_tamanho, r10
+
 	trap 0
