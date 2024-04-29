@@ -42,14 +42,25 @@ main:
 
 loop:
 		subi r8,r4,1
-		jal print
 		beqz r8,guardar
 		
 		addi r2,r2,1
 
-		andi r8,r4,1
-		beqz r8,par
-		bnez r8,impar
+		andi r9,r4,1
+		beqz r9,par
+		;impar
+		mult r10,r4,r3
+		addi r10,r10,1
+		add r4,r10,r0
+
+		movi2fp f1,r4
+		cvti2f f1,f1
+
+		sf 0(r1),f1
+		addi r1,r1,#4
+
+
+		j loop
 
 par:
 		srli r6,r4,1
@@ -63,22 +74,7 @@ par:
 
 		j loop
 
-impar:
-		multf f8,f1,f3
-		addf f8,f8,f5
-		
-		movf f1,f8
 
-		sf 0(r1),f1
-		addi r1,r1,#4
-
-		j loop
-
-print:
-		sw Printvalue, r6 ; A[n] tienes que imprimir
-		addi r14,r0,PrintPar
-		trap 5
-		jr r31
 
 guardar:
 		movi2fp f2,r2
