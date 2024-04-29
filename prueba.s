@@ -1,7 +1,7 @@
 .data 
 ;; VARIABLES DE ENTRADA Y SALIDA: NO MODIFICAR ORDEN 
 ; VARIABLE DE ENTRADA: (SE PODRA MODIFICAR EL VALOR ENTRE 1 Y 100) 
-valor_inicial:   .word   7
+valor_inicial:   .word   10
  
 ;; VARIABLES DE SALIDA: 
 secuencia:   .space  120*4 
@@ -32,8 +32,8 @@ main:
 
 		addi r2,r0,1
 
-		movi2fp f5, r2
-		cvti2f f5,f5
+		movi2fp f2, r2
+		cvti2f f2,f2
 
 		addi r3,r0,3
 		movi2fp f3, r3
@@ -42,7 +42,7 @@ main:
 
 loop:
 		subi r8,r4,1
-		beqz r8,guardar
+		beqz r8,jump
 		
 		addi r2,r2,1
 
@@ -76,13 +76,46 @@ par:
 
 
 
-guardar:
-		movi2fp f2,r2
+jump:
+		movi2fp f2, r2
 		cvti2f f2,f2
 		sf secuencia_tamanho,f2
+		addf f1,f0,f0
+		addi r1,r0,secuencia
+		lf f4,0(r1)
+		;addi f1,f1,0(r1)
+		addi r1,r1,#4
+		subi r2,r2,1
+		beqz r2,finish
+
+		lf f5, 0(r1)
+		;add f1,f1,0(r1)
+		addi r1,r1,#4
+
+		j loopmax
+
+loopmax:
+		subi r2,r2,1
+		beqz r2,finish
+		gef f4,f5
+		bfpt simayor
+		bfpf simenor
 
 
-		j finish
+		j loopmax
 
+simayor:
+		lf f5, 0(r1)
+		;add f1,f1,0(r1)
+		addi r1,r1,#4
+		j loopmax
+
+simenor:
+		lf f4,0(r1)
+		addi r1,r1,#4
+		j loopmax
 finish:
+
+		sf secuencia_maximo,f5
+
 		trap 0
