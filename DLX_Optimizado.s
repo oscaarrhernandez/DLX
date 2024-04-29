@@ -39,6 +39,11 @@ main:
 
 		addf f10,f10,f1 ; f10 = f1 -> cargamos f10 con el valor de secuencia -> para hacer el sumatorio
 
+		;lista_valor_medio
+		addi r15,r0,9
+		movi2fp f9, r15
+		cvti2f f9,f9
+
 
 loop:
 		subi r8,r4,1 ; r8 = r4-1
@@ -94,6 +99,8 @@ calculos:
 		movi2fp f2, r2 ; movemos el dato de r2 a f2
 		cvti2f f2,f2 ; convertimos a float
 		sf secuencia_tamanho,f2 ; guardamos en la variable secuencia_tamanho el valor de f2
+		
+		divf f12,f10,f2 ; f12 = sumasecuencia / tamaño secuencia = vMed
 
 		sf secuencia_maximo,f4 ; guardamos en secuencia_maximo el valor de f4
 		; f10 -> suma secuencia
@@ -102,75 +109,63 @@ calculos:
 		; f2  -> vT
 		; f12 -> vMed
 
-		divf f12,f10,f2 ; f12 = sumasecuencia / tamaño secuencia = vMed
 		sf secuencia_valor_medio,f12 ; guardamos el valor de f12 en la variable
 
 		addi r1,r0,lista
 		;vIni*vT
 		multf f15,f11,f2
+		addf f30,f0,f15
 		sf 0(r1),f15
 		addi r1,r1,#4
 		;vMax*vT
 		multf f16,f4,f2
+		addf f30,f30,f16
 		sf 0(r1),f16
 		addi r1,r1,#4
 		;vMed*vT
 		multf f17,f12,f2
+		addf f30,f30,f17
 		sf 0(r1),f17
 		addi r1,r1,#4
 		;(vIni/vMax)*vT
 		divf f18,f11,f4
 		multf f19,f18,f2
+		addf f30,f30,f19
 		sf 0(r1),f19
 		addi r1,r1,#4
 		;(vIni/vMed)*vT
 		divf f20,f11,f12
 		multf f21,f20,f2
+		addf f30,f30,f21
 		sf 0(r1),f21
 		addi r1,r1,#4
 		;(vMax/vIni)*vT
 		divf f22,f4,f11
 		multf f23,f22,f2
+		addf f30,f30,f23
 		sf 0(r1),f23
 		addi r1,r1,#4
 		;(vMax/vMed)*vT
 		divf f24,f4,f12
 		multf f25,f24,f2
+		addf f30,f30,f25
 		sf 0(r1),f25
 		addi r1,r1,#4
 		;(vMed/vIni)*vT
 		divf f26,f12,f11
 		multf f27,f26,f2
+		addf f30,f30,f27
 		sf 0(r1),f27
 		addi r1,r1,#4
 		;(vMed/vMax)*vT
 		divf f28,f12,f4
 		multf f29,f28,f2
-		sf 0(r1),f29
-		addi r1,r1,#4
-
-		;lista_valor_medio
-		addi r15,r0,9
-		movi2fp f9, r15
-		cvti2f f9,f9
-
-		addf f30,f0,f15
-		addf f30,f30,f16
-		addf f30,f30,f17
-		addf f30,f30,f19
-		addf f30,f30,f21
-		addf f30,f30,f23
-		addf f30,f30,f25
-		addf f30,f30,f27
 		addf f30,f30,f29
+		sf 0(r1),f29
 
 
 		divf f31,f30,f9
 		sf lista_valor_medio,f31
-
-
-		j finish
-
 
 finish:
 		trap 0
