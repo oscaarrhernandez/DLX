@@ -115,57 +115,66 @@ calculos:
 		;vIni*vT
 		multf f15,f11,f2
 		addf f30,f0,f15
-		sf 0(r1),f15
-		addi r1,r1,#4
+		
 		;vMax*vT
 		multf f16,f4,f2
 		addf f30,f30,f16
-		sf 0(r1),f16
-		addi r1,r1,#4
+		
 		;vMed*vT
 		multf f17,f12,f2
 		addf f30,f30,f17
-		sf 0(r1),f17
-		addi r1,r1,#4
+		
 		;(vIni/vMax)*vT
 		divf f18,f11,f4
 		multf f19,f18,f2
 		addf f30,f30,f19
-		sf 0(r1),f19
-		addi r1,r1,#4
+		
 		;(vIni/vMed)*vT
 		divf f20,f11,f12
 		multf f21,f20,f2
 		addf f30,f30,f21
-		sf 0(r1),f21
-		addi r1,r1,#4
+		
 		;(vMax/vIni)*vT
 		divf f22,f4,f11
 		multf f23,f22,f2
 		addf f30,f30,f23
-		sf 0(r1),f23
-		addi r1,r1,#4
+		
 		;(vMax/vMed)*vT
 		divf f24,f4,f12
 		multf f25,f24,f2
 		addf f30,f30,f25
-		sf 0(r1),f25
-		addi r1,r1,#4
+		
 		;(vMed/vIni)*vT
 		divf f26,f12,f11
 		multf f27,f26,f2
 		addf f30,f30,f27
-		sf 0(r1),f27
-		addi r1,r1,#4
+		
 		;(vMed/vMax)*vT
 		divf f28,f12,f4
 		multf f29,f28,f2
 		addf f30,f30,f29
+		divf f31,f30,f9
+		sf lista_valor_medio,f31
+		sf 0(r1),f15
+		addi r1,r1,#4
+		sf 0(r1),f16
+		addi r1,r1,#4
+		sf 0(r1),f17
+		addi r1,r1,#4
+		sf 0(r1),f19
+		addi r1,r1,#4
+		sf 0(r1),f21
+		addi r1,r1,#4
+		sf 0(r1),f23
+		addi r1,r1,#4
+		sf 0(r1),f25
+		addi r1,r1,#4
+		sf 0(r1),f27
+		addi r1,r1,#4
 		sf 0(r1),f29
 
 
-		divf f31,f30,f9
-		sf lista_valor_medio,f31
+		
 
 finish:
 		trap 0
