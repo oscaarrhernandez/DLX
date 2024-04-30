@@ -93,8 +93,8 @@ loopmax:
 		beqz r2,calculos ; if (r2 == 0) calculos
 		gef f4,f5 ; gef -> greater equal f4 >= f5
 							; bit de comparación en el registro de estado de FP
-		bfpt simayor ; if bit de comparación en el registro de estado de FP (verdadero) salta a simayor -> f4 >= f5
-		bfpf simenor ; if bit de comparación en el registro de estado de FP (falso) salta a simenor -> f4 < f5
+		bfpt simayor ; Test de bit de comparación en el registro de estado FP. Bifurca si cierto. salta a simayor -> f4 >= f5
+		bfpf simenor ; Test de bit de comparación en el registro de estado FP. Bifurca si falso. salta a simenor -> f4 < f5
 		j loopmax
 
 simayor:
