@@ -1,8 +1,8 @@
 # Práctica DLX Conjetura de Collatz
 
-Óscar Hernández Hernández 70918137Y
+Óscar Hernández Hernández 
 
-Jon García González 70922400Z
+Jon García González 
 
 ---
 
