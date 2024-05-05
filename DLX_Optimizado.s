@@ -11,7 +11,7 @@ secuencia_valor_medio: .float  0
 lista:    .space    9*4 
 lista_valor_medio:  .float  0 
 ;; FIN VARIABLES DE ENTRADA Y SALIDA 
-nueve: .float 0.111111
+nueve: .float 0.111111 ; 1/9 = 0.111111
 uno: .float 1
 
 .text
@@ -27,8 +27,6 @@ main:
 
 		movi2fp f1, r4
 		cvti2f f1,f1
-		;subi r8,r4,1 ; r8 = r4-1
-		;add r13,r13,r4
 		addf f4,f0,f1
 		divf f3,f5,f1
 		movf f11,f1
@@ -62,8 +60,8 @@ loop:
 		sf 0(r1),f1 ; guardamos en secuencia 
 		addi r1,r1,#4 ; apuntamos a la siguiente dirección de memoria de secuencia
 		
-		gtf f4,f1
-		bfpf mayor
+		gtf f4,f1 ; comparamos si f4 > f1
+		bfpf mayor ; en caso de que no sea saltamos a mayor. bfpf -> branch if false; bfpt -> branch if true
 
 		j loop
 
@@ -81,21 +79,31 @@ par:
 		j loop
 
 calculos:
+; f3 -> 1/vIni
+; f5 = 1
+; f7 -> 1/vMax
+; f8 -> 1/vMed
+; f12 -> SecuenciaMedio
+; f15 -> vini*vt
+; f16 -> vmax*vt
+; f17 -> vini*vt* 1/vmax
+; f18 -> vini*vt* 1/vmed
+; f21 -> suma* 1/vini
+; f19 -> vmax*vt* 1/vini
+; f20 -> vmax*vt* 1/vmed
+; f22 -> suma* 1/vmax
 		divf f7,f5,f4
 		movi2fp f10,r13
-; f7 -> 1/vMax
+
 		cvti2f f10,f10 ; Sumasecuencia
-; f21 -> suma* 1/vini
+
 		multf f21,f10,f3
 		movi2fp f2, r2
 
 		cvti2f f2,f2 ; secuenciatamaño
-		;f5 = 1
 
-; f15 -> vini*vt
 		multf f15,f11,f2
-		
-; f16 -> vmax*vt
+
 		multf f16,f4,f2
 
 		addf f30,f10,f15
@@ -107,55 +115,41 @@ calculos:
 		sf secuencia_tamanho,f2
 		sf secuencia_maximo,f4
 
-; f17 -> vini*vt* 1/vmax
 		multf f17,f15,f7
 
 		sf lista+8,f10
 
-; f3 -> 1/vIni
-		;calculado en el main
 
 		sf secuencia+0,f11
 		sf lista+0,f15
 		sf lista+4,f16
 		sf secuencia_valor_medio,f12
 
-; f8 -> 1/vMed
 		divf f8,f5,f12
 
 		addf f30,f30,f21
 
-
-		
-; f18 -> vini*vt* 1/vmed
 		multf f18,f15,f8
 
 		addf f30,f30,f17
 
-; f19 -> vmax*vt* 1/vini
 		multf f19,f16,f3
 
 		sf lista+16,f18
 		addf f30,f30,f18
 
-; f20 -> vmax*vt* 1/vmed
 		multf f20,f16,f8
 
 		addf f30,f30,f19
 
-
-
 		addf f30,f30,f20
 
-; f22 -> suma* 1/vmax
 		multf f22,f10,f7
 
 		sf lista+20,f19
 		sf lista+24,f20
 		sf lista+28,f21
 
-
-		
 		addf f30,f30,f22
 
 		
