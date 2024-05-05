@@ -11,7 +11,7 @@ secuencia_valor_medio: .float  0
 lista:    .space    9*4 
 lista_valor_medio:  .float  0 
 ;; FIN VARIABLES DE ENTRADA Y SALIDA 
-nueve: .float 0.111111 ; 1/9 = 0.111111
+nueve: .float 0.111111
 uno: .float 1
 
 .text
