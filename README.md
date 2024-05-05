@@ -1,8 +1,8 @@
 # Práctica DLX Conjetura de Collatz
 
-Óscar Hernández Hernández 
+Óscar Hernández Hernández 70918137Y
 
-Jon García González 
+Jon García González 70922400Z
 
 ---
 
@@ -10,6 +10,7 @@ Implementación de la Conjetura de Collatz. Trás calcular la conjetura dado un 
 
 $$
 secuencia[0]=valor\_inicial
+
 $$
 
 $$
@@ -21,7 +22,7 @@ $$
 
 ### Configuración Usada
 
-![](C:\Users\oscaa\AppData\Roaming\marktext\images\2024-05-02-19-33-23-image.png)
+<img src="img\hardwareconfiguration.png" title="" alt="" width="262">
 
 Esto quiere decir que tenemos en total 3 unidades de procesos en coma flotante, 1 de addición, otro de multiplicación y otro de división, que requieren 2,5 y 19 ciclos respectivamente. También nos informa que tenemos el mecanismo de adelantamiento activado (*forwarding*).
 
@@ -95,7 +96,7 @@ De este fragmento lo más importante es como nos hemos ahorrado el coste de la d
 
 Revisión de las estadisticas hasta ahora.
 
-![](C:\Users\oscaa\AppData\Roaming\marktext\images\2024-05-02-20-09-32-image.png)
+<img src="img\estadisticasnoOptimizadop1.png" title="" alt="" width="315">
 
 Solo con estos fragmentos de código nos encontramos con 2074 ciclos , 172 detenciones por coma flotante, 237 provocadas por un salto o bifurcación, 194 detenciones por control, este dato equivale al numero de saltos efectivos, los cuales ocasionan una detención de un ciclo por cada uno. Siendo el total de Stalls 604.
 
@@ -156,7 +157,7 @@ En las subrutinas *simayor* y *simenor* lo unico que hacemos es cargar en el que
 
 Revisión de las estadisticas:
 
-![](C:\Users\oscaa\AppData\Roaming\marktext\images\2024-05-02-20-43-44-image.png)
+<img src="img\estadisticiasnoOptimizadop2.png" title="" alt="" width="319">
 
 Si comparamos las estadisticas nos encontramos:
 
@@ -261,7 +262,7 @@ Aquí unicamente realizamos los cálculos de la lista y los guardamos en memoria
 
 Ahora revisaremos las estadisticas totales, de las cuales restaremos las que nos habian salido hasta antes de entrar en la subrutina.
 
-![](C:\Users\oscaa\AppData\Roaming\marktext\images\2024-05-02-20-57-17-image.png)
+<img title="" src="img/estadisticasnoOptimizadop3.png" alt="" width="319">
 
 Ciclos: 3566 $\rightarrow$ 3809
 
@@ -345,9 +346,13 @@ Si comprobamos si la optimización es relevante nos encontramos que de 3566 cicl
 
 Esto es debido a que ya no tenemos que volver a recorrer la secuencia sumando y buscando el maximo, con los cálculos y saltos que ello conlleva.
 
-Aqui dejamos una comparativa de las estadisticas de la versión no optimizada y la versión solo con la optimización de calculo de valor_maximo y sumavalores.<img title="" src="file:///C:/Users/oscaa/AppData/Roaming/marktext/images/2024-05-03-20-10-20-image.png" alt="" width="410">
+Aqui dejamos una comparativa de las estadisticas de la versión no optimizada y la versión solo con la optimización de calculo de valor_maximo y sumavalores.
 
-![](C:\Users\oscaa\AppData\Roaming\marktext\images\2024-05-03-20-08-34-image.png) 
+
+
+<img title="" src="img/stallsComparacion1.png" alt="loading-ag-1040" width="326">
+
+<img title="" src="img/stallsComparacion2.png" alt="" width="329"> 
 
 Añadiendo las dos optimizaciones vistas hasta ahora los ciclos se reducen a 1878 y el total de detenciones a 196.
 
