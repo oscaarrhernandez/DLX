@@ -10,7 +10,6 @@ Implementación de la Conjetura de Collatz. Trás calcular la conjetura dado un 
 
 $$
 secuencia[0]=valor\_inicial
-
 $$
 
 $$
