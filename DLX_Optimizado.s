@@ -1,7 +1,7 @@
 .data 
 ;; VARIABLES DE ENTRADA Y SALIDA: NO MODIFICAR ORDEN 
 ; VARIABLE DE ENTRADA: (SE PODRA MODIFICAR EL VALOR ENTRE 1 Y 100) 
-valor_inicial:   .word   10
+valor_inicial:   .word   97
  
 ;; VARIABLES DE SALIDA: 
 secuencia:   .space  120*4 
@@ -35,13 +35,12 @@ main:
 
 
 mayor:
-		movf f4,f1
+		movf f4,f1 ; copiamos el dato de f1 a f4, dejando en f4 de nuevo el maximo valor de la lista
 
 loop:
 		subi r8,r4,1 ; r8 = r4-1
 		add r13,r13,r4
 		beqz r8,calculos ; if (r8 == 0)calculos
-
 		
 		andi r9,r4,1 ; r9 = r4 && 1
 		
@@ -53,6 +52,30 @@ loop:
 		add r4,r10,r4 ; r4 = r10 +r4 -> r4 = r4*2 + r4
 		addi r4,r4,1 ; r4 = r4 +1
 
+		movi2fp f1,r4 ; movemos el dato de r4 a f1
+		cvti2f f1,f1 ; convertimos a float
+
+		sf 0(r1),f1 ; guardamos en secuencia 
+		addi r1,r1,#4 ; apuntamos a la siguiente dirección de memoria de secuencia
+		
+		gtf f4,f1 ; comparamos si f4 > f1
+		bfpf mayor ; en caso de que no sea saltamos a mayor. bfpf -> branch if false; bfpt -> branch if true
+
+
+
+		subi r8,r4,1 ; r8 = r4-1
+		add r13,r13,r4
+		beqz r8,calculos ; if (r8 == 0)calculos
+		
+		andi r9,r4,1 ; r9 = r4 && 1
+		
+		addi r2,r2,1 ; r2++
+
+		beqz r9,par ; if (r9 == 0)par
+		;impar
+		slli r10,r4,1 ; r10 = r4*2
+		add r4,r10,r4 ; r4 = r10 +r4 -> r4 = r4*2 + r4
+		addi r4,r4,1 ; r4 = r4 +1
 
 		movi2fp f1,r4 ; movemos el dato de r4 a f1
 		cvti2f f1,f1 ; convertimos a float
@@ -63,7 +86,7 @@ loop:
 		gtf f4,f1 ; comparamos si f4 > f1
 		bfpf mayor ; en caso de que no sea saltamos a mayor. bfpf -> branch if false; bfpt -> branch if true
 
-		j loop
+j loop
 
 
 par:
@@ -76,7 +99,55 @@ par:
 		sf 0(r1),f1 ; guardamos en secuencia 
 		addi r1,r1,#4 ; apuntamos a la siguiente dirección de memoria de secuencia
 
-		j loop
+
+		subi r8,r4,1 ; r8 = r4-1
+		add r13,r13,r4
+		beqz r8,calculos ; if (r8 == 0)calculos
+
+		andi r9,r4,1 ; r9 = r4 && 1
+		
+		addi r2,r2,1 ; r2++
+
+		beqz r9,par ; if (r9 == 0)par
+		;impar
+		slli r10,r4,1 ; r10 = r4*2
+		add r4,r10,r4 ; r4 = r10 +r4 -> r4 = r4*2 + r4
+		addi r4,r4,1 ; r4 = r4 +1
+
+		movi2fp f1,r4 ; movemos el dato de r4 a f1
+		cvti2f f1,f1 ; convertimos a float
+
+		sf 0(r1),f1 ; guardamos en secuencia 
+		addi r1,r1,#4 ; apuntamos a la siguiente dirección de memoria de secuencia
+		
+		gtf f4,f1 ; comparamos si f4 > f1
+		bfpf mayor ; en caso de que no sea saltamos a mayor. bfpf -> branch if false; bfpt -> branch if true
+		
+
+		subi r8,r4,1 ; r8 = r4-1
+		add r13,r13,r4
+		beqz r8,calculos ; if (r8 == 0)calculos
+
+		andi r9,r4,1 ; r9 = r4 && 1
+		
+		addi r2,r2,1 ; r2++
+
+		beqz r9,par ; if (r9 == 0)par
+		;impar
+		slli r10,r4,1 ; r10 = r4*2
+		add r4,r10,r4 ; r4 = r10 +r4 -> r4 = r4*2 + r4
+		addi r4,r4,1 ; r4 = r4 +1
+
+		movi2fp f1,r4 ; movemos el dato de r4 a f1
+		cvti2f f1,f1 ; convertimos a float
+
+		sf 0(r1),f1 ; guardamos en secuencia 
+		addi r1,r1,#4 ; apuntamos a la siguiente dirección de memoria de secuencia
+		
+		gtf f4,f1 ; comparamos si f4 > f1
+		bfpf mayor ; en caso de que no sea saltamos a mayor. bfpf -> branch if false; bfpt -> branch if true
+
+j loop
 
 calculos:
 ; f3 -> 1/vIni

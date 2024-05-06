@@ -21,13 +21,13 @@ $$
 
 ### Configuración Usada
 
-<img src="img\hardwareconfiguration.png" title="" alt="" width="262">
+<img src="img/hardwareconfiguration.png" title="" alt="hardware configuration" width="322">
 
 Esto quiere decir que tenemos en total 3 unidades de procesos en coma flotante, 1 de addición, otro de multiplicación y otro de división, que requieren 2,5 y 19 ciclos respectivamente. También nos informa que tenemos el mecanismo de adelantamiento activado (*forwarding*).
 
 ### Implementación no optimizada
 
-*<u>Todos los cálculos están sacados con el valor_inicial = 97.</u>*
+*Todos los cálculos están sacados con el valor_inicial = 97.*
 
 Se realizó una primera implementación partiendo del código visto en clase. Este codigo calculaba y mostraba por pantalla la conjetura de collatz. 
 
@@ -95,7 +95,7 @@ De este fragmento lo más importante es como nos hemos ahorrado el coste de la d
 
 Revisión de las estadisticas hasta ahora.
 
-<img src="img\estadisticasnoOptimizadop1.png" title="" alt="" width="315">
+<img src="img/estadisticasnoOptimizadop1.png" title="" alt="estadisticasnoOptimizadop1" width="338">
 
 Solo con estos fragmentos de código nos encontramos con 2074 ciclos , 172 detenciones por coma flotante, 237 provocadas por un salto o bifurcación, 194 detenciones por control, este dato equivale al numero de saltos efectivos, los cuales ocasionan una detención de un ciclo por cada uno. Siendo el total de Stalls 604.
 
@@ -156,7 +156,7 @@ En las subrutinas *simayor* y *simenor* lo unico que hacemos es cargar en el que
 
 Revisión de las estadisticas:
 
-<img src="img\estadisticiasnoOptimizadop2.png" title="" alt="" width="319">
+<img src="img/estadisticiasnoOptimizadop2.png" title="" alt="estadisticiasnoOptimizadop2" width="335">
 
 Si comparamos las estadisticas nos encontramos:
 
@@ -261,7 +261,7 @@ Aquí unicamente realizamos los cálculos de la lista y los guardamos en memoria
 
 Ahora revisaremos las estadisticas totales, de las cuales restaremos las que nos habian salido hasta antes de entrar en la subrutina.
 
-<img title="" src="img/estadisticasnoOptimizadop3.png" alt="" width="319">
+<img src="img/estadisticasnoOptimizadop3.png" title="" alt="estadisticasnoOptimizadop3" width="336">
 
 Ciclos: 3566 $\rightarrow$ 3809
 
@@ -285,18 +285,20 @@ Como podemos observar el numero de ciclos no ha aumentado mucho pero el numero d
 
 Para esta implementación primero analizamos los problemas que teniamos:
 
-- La multiplicación del loop consume mucho
+- La multiplicación del loop consume mucho.
 
-- Realizamos las operaciones de valor_maximo y la suma de valores en un bucle aparte pudiendolo meter en el principal
+- Realizamos las operaciones de valor_maximo y la suma de valores en un bucle aparte pudiendolo meter en el principal.
 
-- La parte de calculos se puede optimizar reduciendo las divisiones
+- La parte de calculos se puede optimizar reduciendo las divisiones.
+
+- Intentar reducir el numero de saltos al comprobar si es par o impar.
 
 ##### Multiplicación del loop
 
-Para realizar la multiplicación si $secuencia[n-1]$ es impar, fuimos a lo más básico, $3x=x+x+x=2x+x$ . Una vez planteado esto podemos usar el desplazamiento lógico hacia la izquierda para multiplicar por 2 y luego sumarle de nuevo él mismo.
+Para realizar la multiplicación si $secuencia[n-1]$ es impar, fuimos a lo más básico, $3x=x+x+x=2x+x$. Una vez planteado esto podemos usar el desplazamiento lógico hacia la izquierda para multiplicar por 2 y luego sumarle de nuevo él mismo.
 
 ```nasm
-    slli r10,r4,1
+    slli r4,r4,1
     add r4,r10,r4
     addi r4,r4,1
 ```
@@ -347,11 +349,9 @@ Esto es debido a que ya no tenemos que volver a recorrer la secuencia sumando y 
 
 Aqui dejamos una comparativa de las estadisticas de la versión no optimizada y la versión solo con la optimización de calculo de valor_maximo y sumavalores.
 
+<img title="" src="img/stallsComparacion1.png" alt="stallsComparacion1" width="341">
 
-
-<img title="" src="img/stallsComparacion1.png" alt="loading-ag-1040" width="326">
-
-<img title="" src="img/stallsComparacion2.png" alt="" width="329"> 
+<img src="img/stallsComparacion2.png" title="" alt="stallsComparacion2" width="339">
 
 Añadiendo las dos optimizaciones vistas hasta ahora los ciclos se reducen a 1878 y el total de detenciones a 196.
 
@@ -391,9 +391,12 @@ vMed = SumaSecuencia/vT
 lista\_valor\_medio = SumaValores * 0.111111 \rightarrow 1/9=0.\overline1
 $$
 
-Una vez hecho esto nos encontramos con que tenemos que realizar 4 divisiones y 9 multiplicaciones. Por lo que hemos realizado la mitad de divisiones. Considerando el coste de las divisiones y el reordenamiento del codigo esto significa una optimización bastante sustancial.
+Una vez hecho esto nos encontramos con que tenemos que realizar 4 divisiones y 9 multiplicaciones. Por lo que hemos realizado la mitad de divisiones. Considerando el coste de las divisiones y el de las multiplicaciones vemos que pese a noser donde más se optimiza conseguimos bajar unos cuantos ciclos.
 
-Una vez hecha las tres optimizaciones para solucionar los problemas que teniamos, reordenamos las instrucciones para aprovecharnos del paralelismo del procesador.
+##### Bucle par impar
+
+Si nos fijamos, si conseguimos dehacer el bucle de alguna forma podriamos optmizar bastante código. Para ello lo que haremos será añadir al bucle principal una iteracción más del loop(duplicamos el cuerpo del bucle) y al par añadir dos veces el bucle. Esto se hace para evitar el salto a loop `j loop`.
+El resultado es una optimización de 200 ciclos y 100 Stalls.
 
 ### Estadisticas
 
@@ -401,36 +404,36 @@ Una vez hecha las tres optimizaciones para solucionar los problemas que teniamos
 
 | Estadisticas             | VersionNoOptimizada | VersionOptimizada |
 |:------------------------:|:-------------------:|:-----------------:|
-| **Ciclos**               | 3809                | 1963              |
-| **Numero Instrucciones** | 2537                | 1716              |
+| **Ciclos**               | 3809                | 1751              |
+| **Numero Instrucciones** | 2537                | 1610              |
 
 | STALLS                    | VersiónNoOptimizada                | VersiónOptimizada          |
 |:-------------------------:|:----------------------------------:|:--------------------------:|
-| **RAW Stalls**            | 837 = 21.97% of all Cycles         | 33 = 1.68% of all Cycles   |
+| **RAW Stalls**            | 837 = 21.97% of all Cycles         | 33 = 1.88% of all Cycles   |
 | **LD Stalls**             | 119 = 14.22% of RAW Stalls         | 0 = 0.0% of RAW Stalls     |
 | **Branch/Jump Stalls**    | 356 = 42.53% of RAW Stalls         | 0 = 0.0% of RAW Stalls     |
 | **Floating Point Stalls** | 362 = 43.25% of RAW Stalls         | 33 = 100.00% of RAW Stalls |
 | **WAW Stalls**            | 0 = 0.0% of all cycles             | 0 = 0.0% of all cycles     |
-| **Structural Stalls**     | 0 = 0.0% of all cycles             | 15 = 0.76% of all cycles   |
-| **Control Stalls**        | 431 = 11.32% of all cycles         | 194 = 9.88% of all cycles  |
-| **Trap Stalls**           | 2 = 0.05% of all cycles            | 5 = 0.25% of all cycles    |
-| **Total**                 | 1270 Stalls = 33.34% of all cycles | 247 = 12.58% of all cycles |
+| **Structural Stalls**     | 0 = 0.0% of all cycles             | 15 = 0.86% of all cycles   |
+| **Control Stalls**        | 431 = 11.32% of all cycles         | 88 = 5.02% of all cycles   |
+| **Trap Stalls**           | 2 = 0.05% of all cycles            | 5 = 0.28% of all cycles    |
+| **Total**                 | 1270 Stalls = 33.34% of all cycles | 141 = 8.05% of all cycles  |
 
 | Conditional Branches | VersiónNoOptimizada                | VersiónOptimizada                  |
 |:--------------------:|:----------------------------------:|:----------------------------------:|
-| **Total**            | 535 = 21.10% of all Instructions   | 280 = 16.32% of all Instructions   |
+| **Total**            | 535 = 21.10% of all Instructions   | 280 = 17.39% of all Instructions   |
 | **Tomados**          | 194 = 36.26% of all cond. Branches | 88 = 31.43% of all cond. Branches  |
 | **No tomados**       | 341 = 63.74% of all cond. Branches | 192 = 68.57% of all cond. Branches |
 
 | Instrucciones Load/Store | VersiónNoOptimizada                     | VersiónOptimizada                       |
 |:------------------------:|:---------------------------------------:|:---------------------------------------:|
-| **Total**                | 253 = 9.97% of all Instructions         | 135 = 7.87% of all Instructions         |
+| **Total**                | 253 = 9.97% of all Instructions         | 135 = 8.38% of all Instructions         |
 | **Loads**                | 121 = 47.83% of Load/Store-Instructions | 3 = 2.22% of Load/Store-Instructions    |
 | **Stores**               | 132 = 97.78% of Load/Store-Instructions | 132 = 97.78% of Load/Store-Instructions |
 
 | Instrucciones de punto flotante | VersiónNoOptimizada                        | VersiónOptimizada                        |
 |:-------------------------------:|:------------------------------------------:|:----------------------------------------:|
-| **Total**                       | 189 = 7.45% of all Instructions            | 22 = 7.87% of all Instructions           |
+| **Total**                       | 189 = 7.45% of all Instructions            | 22 = 1.37% of all Instructions           |
 | **Sumas**                       | 129 = 68.25% of Floating Point Stage inst. | 9 = 40.91% of Floating Point Stage inst. |
 | **Multiplicaciones**            | 52 = 27.51% of Floating Point Stage inst.  | 9 = 40.91% of Floating Point Stage inst. |
 | **Divisiones**                  | 8 = 4.23% of Floating Point Stage inst.    | 4 = 18.18% of Floating Point Stage inst. |
@@ -443,82 +446,82 @@ Una vez hecha las tres optimizaciones para solucionar los problemas que teniamos
 
 | Estadisticas             | VersionNoOptimizada | VersionOptimizada |
 | ------------------------ | ------------------- | ----------------- |
-| **Ciclos**               | 1084                | 528               |
-| **Numero Instrucciones** | 645                 | 428               |
+| **Ciclos**               | 1084                | 477               |
+| **Numero Instrucciones** | 645                 | 402               |
 
 | STALLS                    | VersiónNoOptimizada               | VersiónOptimizada          |
 | ------------------------- | --------------------------------- | -------------------------- |
-| **RAW Stalls**            | 333 = 30.72% of all Cycles        | 33 = 6.25% of all Cycles   |
+| **RAW Stalls**            | 333 = 30.72% of all Cycles        | 33 = 6.92% of all Cycles   |
 | **LD Stalls**             | 28 = 8.41% of RAW Stalls          | 0 = 0.0% of RAW Stalls     |
 | **Branch/Jump Stalls**    | 83 = 24.92% of RAW Stalls         | 0 = 0.0% of RAW Stalls     |
 | **Floating Point Stalls** | 222 = 66.67% of RAW Stalls        | 33 = 100.00% of RAW Stalls |
 | **WAW Stalls**            | 0 = 0.0% of all cycles            | 0 = 0.0% of all cycles     |
-| **Structural Stalls**     | 0 = 0.0% of all cycles            | 15 = 2.84% of all cycles   |
-| **Control Stalls**        | 102 = 9.41% of all cycles         | 47 = 8.90% of all cycles   |
-| **Trap Stalls**           | 2 = 0.18% of all cycles           | 5 = 0.95% of all cycles    |
-| **Total**                 | 437 Stalls = 40.31% of all cycles | 100 = 18.94% of all cycles |
+| **Structural Stalls**     | 0 = 0.0% of all cycles            | 15 = 3.14% of all cycles   |
+| **Control Stalls**        | 102 = 9.41% of all cycles         | 21 = 4.40% of all cycles   |
+| **Trap Stalls**           | 2 = 0.18% of all cycles           | 5 = 1.05% of all cycles    |
+| **Total**                 | 437 Stalls = 40.31% of all cycles | 74 = 15.51% of all cycles  |
 
 | Conditional Branches | VersiónNoOptimizada               | VersiónOptimizada                 |
 | -------------------- | --------------------------------- | --------------------------------- |
-| **Total**            | 134 = 20.78% of all Instructions  | 63 = 14.72% of all Instructions   |
+| **Total**            | 134 = 20.78% of all Instructions  | 63 = 15.67% of all Instructions   |
 | **Tomados**          | 47 = 35.07% of all cond. Branches | 21 = 33.33% of all cond. Branches |
 | **No tomados**       | 87 = 64.92% of all cond. Branches | 42 = 66.67% of all cond. Branches |
 
 | Instrucciones Load/Store | VersiónNoOptimizada                    | VersiónOptimizada                      |
 | ------------------------ | -------------------------------------- | -------------------------------------- |
-| **Total**                | 71 = 9.97% of all Instructions         | 44 = 10.28% of all Instructions        |
+| **Total**                | 71 = 9.97% of all Instructions         | 44 = 10.94% of all Instructions        |
 | **Loads**                | 30 = 42.25% of Load/Store-Instructions | 3 = 6.82% of Load/Store-Instructions   |
 | **Stores**               | 41 = 57.75% of Load/Store-Instructions | 41 = 93.18% of Load/Store-Instructions |
 
 | Instrucciones de punto flotante | VersiónNoOptimizada                       | VersiónOptimizada                        |
 | ------------------------------- | ----------------------------------------- | ---------------------------------------- |
-| **Total**                       | 63 = 9.77% of all Instructions            | 22 = 5.14% of all Instructions           |
+| **Total**                       | 63 = 9.77% of all Instructions            | 22 = 5.47% of all Instructions           |
 | **Sumas**                       | 38 = 60.32% of Floating Point Stage inst. | 9 = 40.91% of Floating Point Stage inst. |
 | **Multiplicaciones**            | 17 = 26.98% of Floating Point Stage inst. | 9 = 40.91% of Floating Point Stage inst. |
 | **Divisiones**                  | 8 = 12.70% of Floating Point Stage inst.  | 4 = 18.18% of Floating Point Stage inst. |
 
 | Traps     | VersiónNoOptimizada           | VersiónOptimizada             |
 | --------- | ----------------------------- | ----------------------------- |
-| **Traps** | 1 = 0.16% of all Instructions | 1 = 0.23% of all Instructions |
+| **Traps** | 1 = 0.16% of all Instructions | 1 = 0.25% of all Instructions |
 
 ##### valor_inicial : 10
 
 | Estadisticas             | VersionNoOptimizada | VersionOptimizada |
 | ------------------------ | ------------------- | ----------------- |
-| **Ciclos**               | 447                 | 199               |
-| **Numero Instrucciones** | 197                 | 134               |
+| **Ciclos**               | 447                 | 190               |
+| **Numero Instrucciones** | 197                 | 129               |
 
 | STALLS                    | VersiónNoOptimizada               | VersiónOptimizada          |
 | ------------------------- | --------------------------------- | -------------------------- |
-| **RAW Stalls**            | 221 = 49.44% of all Cycles        | 33 = 16.58% of all Cycles  |
+| **RAW Stalls**            | 221 = 49.44% of all Cycles        | 33 = 17.37% of all Cycles  |
 | **LD Stalls**             | 7 = 3.17% of RAW Stalls           | 0 = 0.0% of RAW Stalls     |
 | **Branch/Jump Stalls**    | 20 = 9.05% of RAW Stalls          | 0 = 0.0% of RAW Stalls     |
 | **Floating Point Stalls** | 194 = 87.78% of RAW Stalls        | 33 = 100.00% of RAW Stalls |
 | **WAW Stalls**            | 0 = 0.0% of all cycles            | 0 = 0.0% of all cycles     |
-| **Structural Stalls**     | 0 = 0.0% of all cycles            | 15 = 7.54% of all cycles   |
-| **Control Stalls**        | 25 = 5.59% of all cycles          | 12 = 6.03% of all cycles   |
-| **Trap Stalls**           | 2 = 0.45% of all cycles           | 5 = 2.51% of all cycles    |
-| **Total**                 | 248 Stalls = 55.48% of all cycles | 65 = 32.66% of all cycles  |
+| **Structural Stalls**     | 0 = 0.0% of all cycles            | 15 = 7.89% of all cycles   |
+| **Control Stalls**        | 25 = 5.59% of all cycles          | 7 = 3.68% of all cycles    |
+| **Trap Stalls**           | 2 = 0.45% of all cycles           | 5 = 2.63% of all cycles    |
+| **Total**                 | 248 Stalls = 55.48% of all cycles | 60 = 31.58% of all cycles  |
 
 | Conditional Branches | VersiónNoOptimizada               | VersiónOptimizada                |
 | -------------------- | --------------------------------- | -------------------------------- |
-| **Total**            | 29 = 14.72% of all Instructions   | 14 = 10.45% of all Instructions  |
+| **Total**            | 29 = 14.72% of all Instructions   | 14 = 10.85% of all Instructions  |
 | **Tomados**          | 12 = 41.38% of all cond. Branches | 7 = 50.00% of all cond. Branches |
 | **No tomados**       | 17 = 58.62% of all cond. Branches | 7 = 50.00% of all cond. Branches |
 
 | Instrucciones Load/Store | VersiónNoOptimizada                    | VersiónOptimizada                      |
 | ------------------------ | -------------------------------------- | -------------------------------------- |
-| **Total**                | 29 = 14.72% of all Instructions        | 23 = 17.16% of all Instructions        |
+| **Total**                | 29 = 14.72% of all Instructions        | 23 = 17.83% of all Instructions        |
 | **Loads**                | 9 = 31.03% of Load/Store-Instructions  | 3 = 13.04% of Load/Store-Instructions  |
 | **Stores**               | 20 = 68.96% of Load/Store-Instructions | 20 = 86.96% of Load/Store-Instructions |
 
 | Instrucciones de punto flotante | VersiónNoOptimizada                       | VersiónOptimizada                        |
 | ------------------------------- | ----------------------------------------- | ---------------------------------------- |
-| **Total**                       | 35 = 17.77% of all Instructions           | 22 = 16.42% of all Instructions          |
+| **Total**                       | 35 = 17.77% of all Instructions           | 22 = 17.05% of all Instructions          |
 | **Sumas**                       | 17 = 48.57% of Floating Point Stage inst. | 9 = 40.91% of Floating Point Stage inst. |
 | **Multiplicaciones**            | 10 = 28.57% of Floating Point Stage inst. | 9 = 40.91% of Floating Point Stage inst. |
 | **Divisiones**                  | 8 = 22.86% of Floating Point Stage inst.  | 4 = 18.18% of Floating Point Stage inst. |
 
 | Traps     | VersiónNoOptimizada           | VersiónOptimizada             |
 | --------- | ----------------------------- | ----------------------------- |
-| **Traps** | 1 = 0.51% of all Instructions | 1 = 0.75% of all Instructions |
+| **Traps** | 1 = 0.51% of all Instructions | 1 = 0.78% of all Instructions |
