@@ -1,3 +1,5 @@
+; Oscar Hernandez Hernandez 
+; Jon Garcia Gonzalez 
 .data 
 ;; VARIABLES DE ENTRADA Y SALIDA: NO MODIFICAR ORDEN 
 ; VARIABLE DE ENTRADA: (SE PODRA MODIFICAR EL VALOR ENTRE 1 Y 100) 
