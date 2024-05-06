@@ -10,7 +10,8 @@ Implementación de la Conjetura de Collatz. Trás calcular la conjetura dado un 
 
 $$
 secuencia[0]=valor\_inicial
-
+$$
+$$
 secuencia[n]=\Bigg\{\begin{align*}
 \frac{secuencia[n-1]}{2} \quad\text{, si}\quad secuencia[n] \quad\text{es par}\\
 secuencia[n-1]x3+1 \quad\text{, si}\quad secuencia[n] \quad\text{es impar}
